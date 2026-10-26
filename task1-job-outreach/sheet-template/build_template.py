@@ -195,7 +195,7 @@ def build():
 
     ws = wb.create_sheet("Leads")
     header(ws, LEADS_COLS)
-    dv = DataValidation(type="list", formula1='"New,Contacted,Replied,Won,Lost"')
+    dv = DataValidation(type="list", formula1='"New,Contacted,Replied,Won,Lost,Expired"')
     ws.add_data_validation(dv)
     dv.add(f"I2:I{MAX_ROWS}")
 
