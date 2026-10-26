@@ -15,6 +15,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 SHEET_ID = "1qs8KZSVPqFrMvPLQ9kXMcUAyStUmYLxjEu0-Vt5EMPk"
 GSHEETS_CRED = {"googleSheetsOAuth2Api": {"name": "Google Sheets - RAY"}}
+ANTHROPIC_CRED = {"anthropicApi": {"name": "Anthropic - RAY"}}
 
 
 def js(name):
@@ -86,6 +87,67 @@ nodes = [
         },
         "options": {},
     }),
+
+    # ---- Stage B: AI checks ------------------------------------------------
+    node("Sticky: Stage B", "n8n-nodes-base.stickyNote", 1, [1320, -260], {
+        "content": (
+            "## Stage B: AI checks (Claude)\n"
+            "Skips jobs already in **Leads** or **Rejected** (no repeat AI calls, no duplicate rows). "
+            "Claude Haiku judges each job against the 4 checks and returns strict JSON "
+            "(structured outputs), including a fit score and 2-3 concrete hooks for the email.\n\n"
+            "**Apply AI Decision** turns judgments into keep/reject using the Settings tab "
+            "(second-language rule, minimum lead quality, max new leads per day). "
+            "Failed or unreadable AI answers are rejected as *AI check failed*, never lost."
+        ),
+        "height": 240, "width": 900,
+    }),
+    node("Read Leads", "n8n-nodes-base.googleSheets", 4.7, [1320, -100], {
+        "operation": "read",
+        **sheet_ref("Leads"),
+        "options": {},
+    }, credentials=GSHEETS_CRED, executeOnce=True, alwaysOutputData=True),
+    node("Read Rejected", "n8n-nodes-base.googleSheets", 4.7, [1540, -100], {
+        "operation": "read",
+        **sheet_ref("Rejected"),
+        "options": {},
+    }, credentials=GSHEETS_CRED, executeOnce=True, alwaysOutputData=True),
+    node("Skip Known Jobs", "n8n-nodes-base.code", 2, [1760, -100], {
+        "jsCode": js("03_skip_known.js"),
+    }),
+    node("Build AI Check", "n8n-nodes-base.code", 2, [1980, -100], {
+        "jsCode": js("04_build_ai_check.js"),
+    }),
+    node("AI Check (Claude)", "n8n-nodes-base.httpRequest", 4.2, [2200, -100], {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": True,
+        "headerParameters": {"parameters": [{"name": "anthropic-version", "value": "2023-06-01"}]},
+        "sendBody": True,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+            "batching": {"batch": {"batchSize": 3, "batchInterval": 1000}},
+            "timeout": 120000,
+        },
+    }, credentials=ANTHROPIC_CRED, onError="continueRegularOutput", retryOnFail=True, maxTries=3, waitBetweenTries=5000),
+    node("Apply AI Decision", "n8n-nodes-base.code", 2, [2420, -100], {
+        "jsCode": js("05_apply_ai_decision.js"),
+    }),
+    node("Qualified lead?", "n8n-nodes-base.if", 2.2, [2640, -100], {
+        "conditions": {
+            "options": {"caseSensitive": True, "leftValue": "", "typeValidation": "strict", "version": 2},
+            "conditions": [{
+                "id": "qualified-check",
+                "leftValue": "={{ $json.qualified }}",
+                "rightValue": "",
+                "operator": {"type": "boolean", "operation": "true", "singleValue": True},
+            }],
+            "combinator": "and",
+        },
+        "options": {},
+    }),
 ]
 
 
@@ -94,6 +156,10 @@ def link(*names):
 
 
 connections = link("Run manually", "Read Settings", "Build Config", "Fetch Jobs", "Normalize & Pre-filter", "Passed pre-filter?")
+# Stage B hangs off the TRUE output (index 0) of "Passed pre-filter?".
+connections["Passed pre-filter?"] = {"main": [[{"node": "Read Leads", "type": "main", "index": 0}], []]}
+connections.update(link("Read Leads", "Read Rejected", "Skip Known Jobs", "Build AI Check",
+                        "AI Check (Claude)", "Apply AI Decision", "Qualified lead?"))
 
 workflow = {
     "name": "RAY Lead Engine",
