@@ -8,7 +8,7 @@ An n8n workflow built to run every morning. It finds companies hiring an Executi
 
 | | |
 |---|---|
-| Google Sheet (live output) | _link added before submission_ |
+| Google Sheet (live output) | [RAY Lead Engine (view only)](https://docs.google.com/spreadsheets/d/1qs8KZSVPqFrMvPLQ9kXMcUAyStUmYLxjEu0-Vt5EMPk/edit?usp=sharing) |
 | n8n workflow export | [`workflow/RAY_Lead_Engine.json`](workflow/RAY_Lead_Engine.json) + [`workflow/RAY_Lead_Engine_Error_Alert.json`](workflow/RAY_Lead_Engine_Error_Alert.json) |
 | Sample output | [`sample-output/`](sample-output/): `leads.csv`, `leads.json`, `rejected.csv`, `run_log.csv` |
 | Empty Sheet template | [`sheet-template/RAY_Lead_Engine_Template.xlsx`](sheet-template/RAY_Lead_Engine_Template.xlsx) |

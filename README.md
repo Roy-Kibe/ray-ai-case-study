@@ -4,7 +4,7 @@
 
 | Task | What was built | Links |
 |---|---|---|
-| **1. Executive Assistant job outreach** | An n8n workflow that finds remote, English-speaking EA/Admin jobs every day, filters out agencies and poor fits with Claude, and writes a personalized outreach message for each real end client into a Google Sheet. | [README & user guide](task1-job-outreach/README.md) · [n8n export](task1-job-outreach/workflow/) · [Sample output](task1-job-outreach/sample-output/) · Google Sheet: _link added before submission_ |
+| **1. Executive Assistant job outreach** | An n8n workflow that finds remote, English-speaking EA/Admin jobs every day, filters out agencies and poor fits with Claude, and writes a personalized outreach message for each real end client into a Google Sheet. | [README & user guide](task1-job-outreach/README.md) · [n8n export](task1-job-outreach/workflow/) · [Sample output](task1-job-outreach/sample-output/) · [Google Sheet](https://docs.google.com/spreadsheets/d/1qs8KZSVPqFrMvPLQ9kXMcUAyStUmYLxjEu0-Vt5EMPk/edit?usp=sharing) |
 | **2. Executive Travel Planner** | A Notion workspace for founder travel: one Trips database, a mobile-friendly Trip Brief template, and Timeline and Status views. | _Notion link added before submission_ |
 
 ## Task 1 at a glance
