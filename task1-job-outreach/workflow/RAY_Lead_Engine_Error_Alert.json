@@ -2,27 +2,18 @@
   "name": "RAY Lead Engine: Error Alert",
   "nodes": [
     {
-      "id": "c08ef7b7-7716-5c05-8a95-00f9e3a532ee",
+      "parameters": {},
+      "id": "b91f768d-1dd4-4a29-9db1-2f032d6ea67e",
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
-      ],
-      "parameters": {}
+        -240,
+        32
+      ]
     },
     {
-      "id": "b8ffa979-bdab-5704-8b0f-02dcccb23252",
-      "name": "Read Settings",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        220,
-        0
-      ],
       "parameters": {
-        "operation": "read",
         "documentId": {
           "__rl": true,
           "mode": "id",
@@ -35,54 +26,63 @@
         },
         "options": {}
       },
+      "id": "7e83f00e-a6ba-4bf8-a9a9-61b88a537c9b",
+      "name": "Read Settings",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        32
+      ],
+      "alwaysOutputData": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "name": "Google Sheets - RAY"
+          "id": "j0MGjtNmTdakrztZ",
+          "name": "Google Sheets OAuth2 API"
         }
       },
-      "onError": "continueRegularOutput",
-      "alwaysOutputData": true
+      "onError": "continueRegularOutput"
     },
     {
-      "id": "3d1490cd-cdad-5988-af49-76f95652ac34",
+      "parameters": {
+        "jsCode": "// Build the alert email. The recipient comes from Settings (\"Send error alerts to\");\n// if the Settings tab itself can't be read, the fallback address below is used.\nconst FALLBACK_TO = 'roygithara6@gmail.com';\nlet to = FALLBACK_TO;\nfor (const { json: r } of $input.all()) {\n  if (String(r.ID ?? '').trim() === 'alert_to' && String(r['Your choice'] ?? '').trim()) {\n    to = String(r['Your choice']).trim();\n  }\n}\nconst err = $('Error Trigger').first().json;\nconst ex = err.execution || {};\nconst wf = err.workflow || {};\nconst esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));\nconst message = (ex.error && ex.error.message) || 'Unknown error';\nconst html = `<div style=\"font-family:Arial,sans-serif;font-size:14px\">\n  <h3 style=\"margin:0 0 8px;color:#b91c1c\">${esc(wf.name || 'A workflow')} failed</h3>\n  <p><b>Error:</b> ${esc(message)}</p>\n  <p><b>Failed at node:</b> ${esc(ex.lastNodeExecuted || 'unknown')}</p>\n  ${ex.url ? `<p><a href=\"${esc(ex.url)}\">Open the failed execution in n8n</a></p>` : ''}\n  <p style=\"color:#666\">See the Troubleshooting section of the README for common fixes.</p>\n</div>`;\nreturn [{ json: { to, subject: `[Alert] ${wf.name || 'Workflow'} failed`, html } }];\n"
+      },
+      "id": "cdaaa351-847f-4834-8d83-9373a45031fc",
       "name": "Build Alert",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        440,
-        0
-      ],
-      "parameters": {
-        "jsCode": "// Build the alert email. The recipient comes from Settings (\"Send error alerts to\");\n// if the Settings tab itself can't be read, the fallback address below is used.\nconst FALLBACK_TO = 'roygithara6@gmail.com';\nlet to = FALLBACK_TO;\nfor (const { json: r } of $input.all()) {\n  if (String(r.ID ?? '').trim() === 'alert_to' && String(r['Your choice'] ?? '').trim()) {\n    to = String(r['Your choice']).trim();\n  }\n}\nconst err = $('Error Trigger').first().json;\nconst ex = err.execution || {};\nconst wf = err.workflow || {};\nconst esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));\nconst message = (ex.error && ex.error.message) || 'Unknown error';\nconst html = `<div style=\"font-family:Arial,sans-serif;font-size:14px\">\n  <h3 style=\"margin:0 0 8px;color:#b91c1c\">${esc(wf.name || 'A workflow')} failed</h3>\n  <p><b>Error:</b> ${esc(message)}</p>\n  <p><b>Failed at node:</b> ${esc(ex.lastNodeExecuted || 'unknown')}</p>\n  ${ex.url ? `<p><a href=\"${esc(ex.url)}\">Open the failed execution in n8n</a></p>` : ''}\n  <p style=\"color:#666\">See the Troubleshooting section of the README for common fixes.</p>\n</div>`;\nreturn [{ json: { to, subject: `[Alert] ${wf.name || 'Workflow'} failed`, html } }];\n"
-      }
+        208,
+        32
+      ]
     },
     {
-      "id": "965a78bd-0a9b-5e2b-b989-ec379ff565b3",
-      "name": "Send Alert",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        660,
-        0
-      ],
       "parameters": {
-        "resource": "message",
-        "operation": "send",
         "sendTo": "={{ $json.to }}",
         "subject": "={{ $json.subject }}",
-        "emailType": "html",
         "message": "={{ $json.html }}",
         "options": {
           "appendAttribution": false
         }
       },
+      "id": "bbde17ef-6316-4624-b8b1-ee0a78ab6e67",
+      "name": "Send Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        432,
+        32
+      ],
+      "webhookId": "e6d70c50-9110-4549-b037-dce24bae79f4",
       "credentials": {
         "gmailOAuth2": {
-          "name": "Gmail - RAY"
+          "id": "h4KoR13eyuUvb9Ox",
+          "name": "Automation Emails"
         }
       }
     }
   ],
+  "pinData": {},
   "connections": {
     "Error Trigger": {
       "main": [
@@ -118,9 +118,24 @@
       ]
     }
   },
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "timezone": "Africa/Nairobi"
+    "binaryMode": "separate"
   },
-  "pinData": {}
+  "versionId": "86df51fb-a31a-4cd7-af14-f854cab9c4bc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "49bcceaa5e2d1e1bbbb513578e8756af597b5cb74aaf350a3246a0e694d82349"
+  },
+  "nodeGroups": [],
+  "id": "WXteAIqOg9DfNgR9",
+  "tags": [
+    {
+      "updatedAt": "2026-10-27T04:54:22.823Z",
+      "createdAt": "2026-10-27T04:54:22.823Z",
+      "id": "jzfWQJPbjWOKBzGu",
+      "name": "RAY AI"
+    }
+  ]
 }

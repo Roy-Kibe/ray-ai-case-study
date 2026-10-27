@@ -1,7 +1,21 @@
+# Private project notes for Claude Code (kept local, not published)
+CLAUDE.md
+
 # Secrets — never commit
 .env
 .env.*
 !.env.example
+
+# Raw Sheet export: full job descriptions (Himalayas terms: don't re-publish jobs).
+# The repo keeps the empty template plus the trimmed sample-output/ instead.
+task1-job-outreach/sheet-template/RAY Lead Engine.xlsx
+
+# Local build/test helpers. Kept on disk, not published: n8n is the source of truth,
+# and the repo ships the exported workflow JSON (Download from n8n) instead.
+task1-job-outreach/workflow/src/
+task1-job-outreach/workflow/test/
+task1-job-outreach/workflow/build_workflow.py
+task1-job-outreach/sheet-template/build_template.py
 
 # OS / editor junk
 Thumbs.db
