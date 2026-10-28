@@ -5,7 +5,7 @@
 | Task | What was built | Links |
 |---|---|---|
 | **1. Executive Assistant job outreach** | An n8n workflow that finds remote, English-speaking EA/Admin jobs every day, filters out agencies and poor fits with Claude, and writes a personalized outreach message for each real end client into a Google Sheet. | [README & user guide](task1-job-outreach/README.md) · [n8n export](task1-job-outreach/workflow/) · [Sample output](task1-job-outreach/sample-output/) · [Google Sheet](https://docs.google.com/spreadsheets/d/1qs8KZSVPqFrMvPLQ9kXMcUAyStUmYLxjEu0-Vt5EMPk/edit?usp=sharing) |
-| **2. Executive Travel Planner** | A Notion workspace for founder travel: one Trips database, a mobile-friendly Trip Brief template, and Timeline and Status views. | _Notion link added before submission_ |
+| **2. Executive Travel Planner** | A Notion workspace for founder travel: one Trips database, a mobile-friendly Trip Brief template, and Timeline and Status views. | [Notion page (view only)](https://periodic-palm-1b4.notion.site/Executive-Travel-Planner-Roy-Githara-407ac8ae102b808f923ae2dc764bd9a2) · [Design notes](task2-notion-travel-planner/README.md) |
 
 ## Task 1 at a glance
 
@@ -24,7 +24,8 @@
 │   ├── workflow/                     ← n8n workflow exports (main + error alert)
 │   ├── sheet-template/               ← empty Google Sheet template (.xlsx)
 │   └── sample-output/                ← real run output: leads, rejections, run log (CSV/JSON)
-└── task2-notion-travel-planner/      ← design notes and screenshots
+└── task2-notion-travel-planner/
+    └── README.md                     ← Notion link, structure and design notes
 ```
 
 No API keys or credentials are stored in this repository. They live only in n8n's credential store.

@@ -190,9 +190,9 @@ The workflow **drafts and never sends**. Cold outreach is reviewed by a person b
 5. **Link the error alert.** In the main workflow, open **⋯ → Settings → Error Workflow** and choose "RAY Lead Engine: Error Alert".
 6. **Fill in `Settings`.** At minimum: your name, "Send it to", and "Send error alerts to".
 7. **Test.** Click **Run manually**, then check `Leads`, `Rejected`, `Run Log` and your inbox.
-8. **Go live.** Check that **⋯ → Settings → Timezone** is set to your timezone (e.g. Africa/Nairobi), then switch the workflow to **Active**. It then runs every day at 07:00.
+8. **Go live.** Check that **⋯ → Settings → Timezone** is set to your timezone (e.g. Africa/Nairobi), then switch the workflow to **Active** (the button is called **Publish** in newer n8n versions). It then runs every day at 07:00.
 
-> **Demo instance note:** in the case-study instance the schedule is configured but left **inactive** to save API credits. The runs documented in section 9 were started manually. Going live takes one switch.
+> **Demo instance note:** in the case-study instance the schedule is configured but left **inactive (unpublished)** to save API credits. The runs documented in section 9 were started manually. Going live takes one switch.
 
 ---
 
@@ -252,5 +252,7 @@ The final list has **16 real end clients**, including Panorama Education, JumpCl
 ---
 
 ## 12. How this was built
+
+**Where the source code is.** n8n is the source of truth, so the code ships inside the workflow export, [`workflow/RAY_Lead_Engine.json`](workflow/RAY_Lead_Engine.json). The JavaScript logic lives in its Code nodes: **Build Config** (search setup), **Normalize & Pre-filter** (mapping and rule checks), **Skip Known Jobs** (de-duplication), **Build AI Check** and **Apply AI Decision** (validation with Claude), **Build Outreach** and **Prepare Lead Rows** (message prompt and Sheet rows), and **Summarize Run** (rejections, run log, expiry and summary email). The Claude calls are HTTP Request nodes, and the Sheets steps are Google Sheets nodes. Import the JSON into n8n to read or run any of it.
 
 Built in n8n Cloud with **Claude Code as a pair-programmer**. My part: the product decisions (lead-gen framing, the competitor filter, source selection and compliance, human review before sending), running and checking every stage in n8n against live data, finding the agencies the first version missed, and directing the prompt and rule changes that fixed them.
